@@ -15,45 +15,84 @@ def get_ticket_number():
     ticket_number = PocketHelpDeskUI.getEntry("Ticket Number")
     return ticket_number
 
+def quick_link_go():
+    if quick_link_chosen == "ITSM":
+        URL = "https://itsm.allcovered.com"
+    else:
+        URL = "https://n-south.allcovered.com"
+    return URL
+
+def quick_link_chosen(quick_link_go):
+    quick_link = PocketHelpDeskUI.getListItems("Quick Links")
+    quick_link_send = PocketHelpDeskUI.addWebLink("{}","{}".format(quick_link, quick_link))
+    return quick_link_send
+
+
 #Popup that confirms a button working
 def buttontest(buttonmsg):
     PocketHelpDeskUI.infoBox("Button testing", "This buttton for "+ buttonmsg + " is working" )
-    
+
+
 #Sending the text template to the notes section
 def new_call_default():
-    new_call_text = ("{} called in because needs assistance with \n\n PC Name: PC_NAME\n\n How did you verify? \n Any other users affected? \n When is the last time it worked?\n \n Additional Troubleshooting:".format(get_user_name()))
-    button = PocketHelpDeskUI.setTextArea("Notes",new_call_text)
-    return button
+    new_call_text = """{} called in because needs assistance with \n\n 
+    PC Name: PC_NAME\n\n 
+    How did you verify? \n 
+    Any other users affected? \n 
+    When is the last time it worked?\n \n 
+    Additional Troubleshooting:""".format(get_user_name())
+    PocketHelpDeskUI.setTextArea("Notes",new_call_text)
+    
 
 def called_no_answer():
-    no_answer_text = 'Called {} at ###. No Answer, left a voice mail, sending mail.'.format(get_user_name())
-    button = PocketHelpDeskUI.setTextArea("Notes", no_answer_text)
-    return button
+    no_answer_text = """Called {} at ###.\n 
+    No Answer. \n 
+    left a voice mail \n
+    sending mail.""".format(get_user_name())
+    PocketHelpDeskUI.setTextArea("Notes", no_answer_text)
+    
 
 def pwd_reset(pwd_chosen):
     if pwd_chosen == "psswd AD":
-        pwd_text_ad = "getting his domain password Reset. Logged in to the DC - \n \n Located the user, reset the password \n \n Was the user able to login? \n"
-        button = PocketHelpDeskUI.setTextArea("Notes", pwd_text_ad)
+        pwd_text_ad = """ getting his domain password Reset. \n
+        Logged in to the DC - \n \n 
+        Located the user, reset the password \n \n 
+        Was the user able to login? \n"""
+        PocketHelpDeskUI.setTextArea("Notes", pwd_text_ad)
     else:
-        pwd_text_365 = "\n getting the passowrd for office 365 reset.\n \n Logged in to O365 Admin console, resetting the password \n \n Are user able to change their own passwords? \n Did you set a password or entered a TEMP so the user can change it? \n Was the user able to Authenticate? \n \n Aditional Information:"
-        button = PocketHelpDeskUI.setTextArea("Notes", pwd_text_365)
-        return button
-#Email template Section
-def change_mgmnt_email(text, subject, recipient, auto = True):
-    import win32com.client as win32
-    outlook = win32.Dispatch('outlook.application')
-    mail = outlook.CreateItem(0)
-    mail.To = recipient
-    mail.Subject = subject
-    mail.HtmlBody = text
-    if auto:
-        mail.send
-    else:
-        mail.Display(False)
-
+        pwd_text_365 = """\n getting the passowrd for office 365 reset.\n \n 
+        Logged in to O365 Admin console, resetting the password \n \n 
+        Are user able to change their own passwords? \n 
+        Did you set a password or entered a TEMP so the user can change it? \n 
+        Was the user able to Authenticate? \n \n 
+        Aditional Information:"""
+        PocketHelpDeskUI.setTextArea("Notes", pwd_text_365)
+        
+def pc_clean():
+    pc_clean_text = """ because his pc is running slow. \n \n
+    Remote to his PC : PC_NAME_HERE via REMOTE_TOOL_HERE\n
+    Started the follwing scans on his PC: \n
+    Hitman Pro from Bomgar.\n
+    Rouge killer \n
+    Ccleaner \n
+    Advised user to call back once scans are done."""
+    PocketHelpDeskUI.setTextArea("Notes", pc_clean_text)
     
-     
 
+#Email template Section
+#def change_mgmnt_email(text, subject, recipient, auto = True):
+#    import win32com.client as win32
+#    outlook = win32.Dispatch('outlook.application')
+#    mail = outlook.CreateItem(0)
+#    mail.To = recipient
+#    mail.Subject = subject
+#    mail.HtmlBody = text
+#    if auto:
+#        mail.send
+#    else:
+#        mail.Display(False)
+
+#Save to text 
 def save_to_text():
     notes_text = PocketHelpDeskUI.getTextArea("Notes")
     file = open("./tickets/{}.txt".format(get_ticket_number()),"w")
@@ -70,31 +109,35 @@ def press(button):
 
 #Pocket HelpDesk UI
 PocketHelpDeskUI = gui("Pocket HelpDesk")
-PocketHelpDeskUI.setSize(500, 650)
+PocketHelpDeskUI.setSize(500, 1000)
 PocketHelpDeskUI.setBg("Grey")
-PocketHelpDeskUI.setFont(12)
-PocketHelpDeskUI.setButtonFont(size = 10, family = 'times', underline = True)
+PocketHelpDeskUI.setFont(10)
+PocketHelpDeskUI.setButtonFont(size = 12, family = 'times', underline = True)
 PocketHelpDeskUI.setOnTop(stay=True)
 
 #Widgets
 #Ticket Entry
-PocketHelpDeskUI.addLabelEntry("Ticket Number",0, 0)
-
+PocketHelpDeskUI.addLabelEntry("Ticket Number", rowspan=0)
+PocketHelpDeskUI.setLabelAnchor("Ticket Number", "n")
+PocketHelpDeskUI.setLabelSticky("Ticket Number", "left")
 #Company name Entry
 PocketHelpDeskUI.addLabelEntry("Company",1, 4)
 
 #User Entry
 PocketHelpDeskUI.addLabelEntry("User",2, 4)
 
+#Quick Links 
+PocketHelpDeskUI.addOptionBox("Quick Links",
+    ["N-able", "Ksouth", "ITSM"])
+PocketHelpDeskUI.addButton("Go", quick_link_chosen, 0, 1)
 #Email Templete Widget
-PocketHelpDeskUI.addButton("Emails", change_mgmnt_email,3,0)
+#PocketHelpDeskUI.addButton("Emails", change_mgmnt_email,3,0)
 
 #Button Templates for ticket notes
 PocketHelpDeskUI.addButton("New Call", new_call_default,3,4)
-
-
 PocketHelpDeskUI.addButton("No Answer", called_no_answer)
-PocketHelpDeskUI.addButtons(["psswd AD","psswd 365"], pwd_reset)
+PocketHelpDeskUI.addButtons(["psswd AD","psswd 365",], pwd_reset)
+PocketHelpDeskUI.addButton("PC Clean", pc_clean,5, 4 )
 #Notes Widget
 PocketHelpDeskUI.addLabel("Notes")
 PocketHelpDeskUI.addScrolledTextArea("Notes", text = None, colspan=6)
