@@ -11,21 +11,32 @@ def get_company_name():
     company_name = PocketHelpDeskUI.getEntry("Company")
     return company_name
 
+#Get Ticket number
 def get_ticket_number():
     ticket_number = PocketHelpDeskUI.getEntry("Ticket Number")
     return ticket_number
 
-def quick_link_go():
-    if quick_link_chosen == "ITSM":
+#Get Quick Link Chosen
+def handle_go_button_press(buttonName):
+  selected_value = get_dropdown_selected_value()
+  link = get_link_for_dropdown_value(selected_value)
+  PocketHelpDeskUI.addWebLink(selected_value, link)
+
+def get_dropdown_selected_value():
+    #get current displayed value on the optionbox
+    return PocketHelpDeskUI.getOptionBox("Quick Links")
+    
+
+def get_link_for_dropdown_value(dropdown_value):
+    if  dropdown_value == "ITSM":
         URL = "https://itsm.allcovered.com"
-    else:
-        URL = "https://n-south.allcovered.com"
+    elif dropdown_value == "N-South":
+        URL = "https://nsouth.allcovered.com"
+    else: 
+        URL = "https://ksouth.allcovered.com"
     return URL
 
-def quick_link_chosen(quick_link_go):
-    quick_link = PocketHelpDeskUI.getListItems("Quick Links")
-    quick_link_send = PocketHelpDeskUI.addWebLink("{}","{}".format(quick_link, quick_link))
-    return quick_link_send
+
 
 
 #Popup that confirms a button working
@@ -129,7 +140,7 @@ PocketHelpDeskUI.addLabelEntry("User",2, 4)
 #Quick Links 
 PocketHelpDeskUI.addOptionBox("Quick Links",
     ["N-able", "Ksouth", "ITSM"])
-PocketHelpDeskUI.addButton("Go", quick_link_chosen, 0, 1)
+PocketHelpDeskUI.addButton("Go", handle_go_button_press, 0, 1)
 #Email Templete Widget
 #PocketHelpDeskUI.addButton("Emails", change_mgmnt_email,3,0)
 
