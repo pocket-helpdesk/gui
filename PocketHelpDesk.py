@@ -36,13 +36,9 @@ def get_link_for_dropdown_value(dropdown_value):
         URL = "https://ksouth.allcovered.com"
     return URL
 
-
-
-
 #Popup that confirms a button working
 def buttontest(buttonmsg):
     PocketHelpDeskUI.infoBox("Button testing", "This buttton for "+ buttonmsg + " is working" )
-
 
 #Sending the text template to the notes section
 def new_call_default():
@@ -51,9 +47,8 @@ def new_call_default():
     How did you verify? \n 
     Any other users affected? \n 
     When is the last time it worked?\n \n 
-    Additional Troubleshooting:""".format(get_user_name())
+    Additional Troubleshooting:\n\n""".format(get_user_name())
     PocketHelpDeskUI.setTextArea("Notes",new_call_text)
-    
 
 def called_no_answer():
     no_answer_text = """Called {} at ###.\n 
