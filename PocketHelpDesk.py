@@ -1,5 +1,8 @@
 #appJar UI Library Import
 from appJar import gui
+import os
+import sys
+import win32com.client as win32
 #Template function are here
 #Get The user name entered
 def get_user_name():
@@ -86,18 +89,15 @@ def pc_clean():
     
 
 #Email template Section
-#def change_mgmnt_email(text, subject, recipient, auto = True):
-#    import win32com.client as win32
-#    outlook = win32.Dispatch('outlook.application')
-#    mail = outlook.CreateItem(0)
-#    mail.To = recipient
-#    mail.Subject = subject
-#    mail.HtmlBody = text
-#    if auto:
-#        mail.send
-#    else:
-#        mail.Display(False)
+def Emailer(text, subject, recipient):
+    outlook = win32.Dispatch('outlook.application')
+    mail = outlook.CreateItem(0)
+    mail.To = recipient
+    mail.Subject = subject
+    mail.HtmlBody = text
+    mail.Display(True)
 
+Emailer('hello' , 'Wow it works' , 'hello@test.com')
 #Save to text 
 def save_to_text():
     notes_text = PocketHelpDeskUI.getTextArea("Notes")
